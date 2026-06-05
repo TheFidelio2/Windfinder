@@ -105,9 +105,12 @@ else:
     pivot = pivot.sort_index()
     
    # pivot.index = pivot.index.strftime("%H:%M")
-    
-    order = ["P2","P3","P4","P5","P6","P7","P14","P15"]
-    pivot = pivot.reindex(columns=order)
+    def sort_key(col):
+        return int(col.split()[0].replace("P", ""))
+
+    pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
+    #order = ["P2","P3","P4","P5","P6","P7","P14","P15"]
+    #pivot = pivot.reindex(columns=order)
     
     st.dataframe(pivot, use_container_width=True)
 
