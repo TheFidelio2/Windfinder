@@ -60,7 +60,7 @@ def load_data():
         # ✅ Anzeige kombinieren
         df["Anzeige"] = (
             " | W:" + df["wd"].astype(str) +
-            " | v:" + df["wskn"].astype(str) +
+            " | v:" + df["wskn"].astype(str)
         )
 
     return df
