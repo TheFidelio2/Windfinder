@@ -33,16 +33,24 @@ def load_data():
             continue
 
         # API liefert Dictionary → values() verwenden
-        for key, entry in data.items():
-            if isinstance(entry, dict):
+        for entry in data.values():
+            try:
+                zeit = int(entry["zeit"])
+                tmp = entry["TMP"]
+                wd = entry["wd"]
+                wskn = entry["wskn"]
+                tfeel = entry["Tfeel"]
+        
                 rows.append({
                     "Waypoint": wp["name"],
-                    "Zeit": int(entry.get("zeit", 0)),
-                    "TMP": entry.get("TMP"),
-                    "wd": deg_to_compass8(entry.get("wd", 0)),
-                    "wskn": entry.get("wskn"),
-                    "Tfeel": entry.get("Tfeel")
+                    "Zeit": zeit,
+                    "TMP": tmp,
+                    "wd": deg_to_compass8(wd),
+                    "wskn": wskn,
+                    "Tfeel": tfeel
                 })
+            except:
+                continue
     df = pd.DataFrame(rows)
 
     if len(df) > 0:
