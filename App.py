@@ -52,7 +52,7 @@ df = load_data()
 if len(df) == 0:
     st.write("Keine Daten")
 else:
-    pivot = df.pivot(index="Waypoint", columns="Zeit", values="Richtung")
+    pivot = df.pivot_table(index="Waypoint", columns="Zeit", values="Richtung", aggfunc="first")
     st.dataframe(pivot)
 
 if st.button("Refresh"):
