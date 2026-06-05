@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 from datetime import datetime, timedelta
 
-# ---------------- Einstellungen ----------------
+# ---------------- Wegpunkte ----------------
 
 waypoints = [
     {"name": "P2", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.537213&lon=9.617470&elev=396"},
@@ -32,6 +32,7 @@ def load_data():
         except:
             continue
 
+        # API liefert Dictionary → values() verwenden
         for entry in data.values():
             rows.append({
                 "Waypoint": wp["name"],
@@ -48,9 +49,10 @@ def load_data():
         now_hour = datetime.now().hour
         limit = now_hour + 6
 
+        # ✅ Zeitfilter
         df = df[(df["Zeit"] >= now_hour) & (df["Zeit"] <= limit)]
 
-        # 🔥 Kombinierte Anzeige
+        # ✅ Anzeige kombinieren
         df["Anzeige"] = (
             "T:" + df["TMP"].astype(str) +
             " | W:" + df["wd"].astype(str) +
@@ -59,18 +61,6 @@ def load_data():
         )
 
     return df
-def color_wind(val):
-    colors = {
-        "N": "#4A90E2",
-        "NO": "#50E3C2",
-        "O": "#F5A623",
-        "SO": "#F8E71C",
-        "S": "#D0021B",
-        "SW": "#8B572A",
-        "W": "#7ED321",
-        "NW": "#9013FE"
-    }
-    return "background-color: " + colors.get(val, "white")
 
 # ---------------- UI ----------------
 
@@ -83,19 +73,15 @@ if len(df) == 0:
     st.write("Keine Daten")
 else:
     pivot = df.pivot_table(
-        index="Waypoint",
-        columns="Zeit",
-        values="Richtung",
+        index="Zeit",
+        columns="Waypoint",
+        values="Anzeige",
         aggfunc="first"
     )
 
-    # ✅ schönere Zeitanzeige
-    pivot.columns = pivot.columns.strftime("%H:%M")
+    pivot = pivot.sort_index()
 
-    st.dataframe(
-        pivot.style.applymap(color_wind),
-        use_container_width=True
-    )
+    st.dataframe(pivot, use_container_width=True)
 
 # Refresh Button
 if st.button("🔄 Aktualisieren"):
