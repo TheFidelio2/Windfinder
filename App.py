@@ -33,7 +33,7 @@ def load_data():
             continue
 
         # API liefert Dictionary → values() verwenden
-        for entry in data.values():
+        for key,entry in data.items():
             rows.append({
                 "Waypoint": wp["name"],
                 "Zeit": int(entry.get("zeit", 0)),
