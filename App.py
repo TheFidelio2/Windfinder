@@ -6,15 +6,20 @@ from datetime import datetime, timedelta
 # ---------------- Wegpunkte ----------------
 
 waypoints = [
-    {"name": "P2", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.537213&lon=9.617470&elev=396"},
-    {"name": "P3", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.553687&lon=9.529387&elev=396"},
-    {"name": "P4", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.568882&lon=9.398480&elev=396"},
-    {"name": "P5", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.601061&lon=9.355469&elev=396"},
-    {"name": "P6", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.630091&lon=9.292966&elev=396"},
-    {"name": "P7", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.664314&lon=9.225897&elev=396"},
-    {"name": "P14", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.686153&lon=9.257889&elev=396"},
+    {"name": "P2 Lindau", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.537213&lon=9.617470&elev=396"},
+    {"name": "P3 Rheinmündung", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.553687&lon=9.529387&elev=396"},
+    {"name": "P4 Romanshorn", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.568882&lon=9.398480&elev=396"},
+    {"name": "P5 Kesswill", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.601061&lon=9.355469&elev=396"},
+    {"name": "P6 Altnau", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.630091&lon=9.292966&elev=396"},
+    {"name": "P7 Konstanz", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.664314&lon=9.225897&elev=396"},
+    {"name": "P14 Meersburg", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.686153&lon=9.257889&elev=396"},
     {"name": "P15", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.662275&lon=9.303939&elev=396"},
-    {"name": "P16", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.647017&lon=9.355478&elev=396"}
+    {"name": "P16 Immenstad", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.647017&lon=9.355478&elev=396"},
+    {"name": "P17 Friedrichshafen", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.634182&lon=9.436297&elev=396"},
+    {"name": "P18 Langenargen", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.584788&lon=9.524766&elev=396"},
+    {"name": "P19 Wasserburg", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.559905&lon=9.590836&elev=396"},
+    {"name": "P20 Lindau", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.5418&lon=9.671614&elev=396"},
+    
 ]
 
 # ---------------- Funktionen ----------------
