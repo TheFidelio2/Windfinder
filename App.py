@@ -40,10 +40,10 @@ def load_data():
                 rows.append({
                     "Waypoint": wp["name"],
                     "Zeit": int(entry.get("zeit", 0)),
-                    "TMP": entry.get("TMP"),
+                    #"TMP": entry.get("TMP"),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
                     "wskn": entry.get("wskn"),
-                    "Tfeel": entry.get("Tfeel")
+                    #"Tfeel": entry.get("Tfeel")
                 })
             except:
                 continue
