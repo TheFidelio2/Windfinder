@@ -41,10 +41,13 @@ def load_data():
 
                 rows.append({
                     "Waypoint": wp["name"],
+                    "day": entry.get("day"),
                     "Zeit": int(zeit_clean),
                     "wd_deg": entry.get("wd", 0),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
                     "wskn": entry.get("wskn")
+                    
+                    
                 })
             except:
                 continue
@@ -52,6 +55,14 @@ def load_data():
     df = pd.DataFrame(rows)
 
     if len(df) > 0:
+        df = df[
+            ((df["day"] == "Fri") & (df["Zeit"] >= 16)) |
+            ((df["day"] == "Sat") & (df["Zeit"] <= 16))
+        ]
+        day_order = {"Fri": 0, "Sat": 1}
+        df["day_num"] = df["day"].map(day_order)
+        
+        df = df.sort_values(["day_num", "Zeit"])
         # ✅ aktuelle Stunde
         now = datetime.now().replace(minute=0, second=0, microsecond=0)
         now_hour = now.hour
@@ -64,7 +75,7 @@ def load_data():
         df = df.groupby("Waypoint").head(6)
 
         # ✅ echte Zeit berechnen
-        df["Zeit_real"] = df["Zeit"].astype(str).str.zfill(2) + ":00"
+        df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
 
         # ✅ Anzeige
         df["Anzeige"] = (
