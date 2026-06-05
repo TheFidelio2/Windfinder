@@ -102,12 +102,14 @@ df = load_data()
 if len(df) == 0:
     st.write("Keine Daten")
 else:
-    pivot = df.pivot_table(
+    
+    pivot_dir = df.pivot_table(
         index="Zeit_real",
         columns="Waypoint",
-        values="Anzeige",
+        values="Richtung",
         aggfunc="first"
     )
+    
     pivot_wind = df.pivot_table(
         index="Zeit_real",
         columns="Waypoint",
@@ -115,13 +117,11 @@ else:
         aggfunc="first"
     )
 
-    pivot_wind = df.pivot_table(
-        index="Zeit_real",
-        columns="Waypoint",
-        values="Wind",
-        aggfunc="first"
+    pivot = pd.concat(
+        [pivot_dir, pivot_wind],
+        axis=1,
+        keys=["Richtung", "Wind"]
     )
-    
     # ✅ Sortierung der Spalten nach P-Nummer
     def sort_key(col):
         return int(col.split()[0].replace("P", ""))
