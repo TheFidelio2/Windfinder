@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import requests
-from datetime import datetime, timedelta
 
 # ---------------- Wegpunkte ----------------
 
@@ -19,7 +18,6 @@ waypoints = [
     {"name": "P18 Langenargen", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.584788&lon=9.524766&elev=396"},
     {"name": "P19 Wasserburg", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.559905&lon=9.590836&elev=396"},
     {"name": "P20 Lindau", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.5418&lon=9.671614&elev=396"},
-    
 ]
 
 # ---------------- Funktionen ----------------
@@ -27,6 +25,19 @@ waypoints = [
 def deg_to_compass8(deg):
     dirs = ["N","NO","O","SO","S","SW","W","NW"]
     return dirs[int((deg + 22.5) / 45) % 8]
+
+# ✅ Winkel-Differenz korrekt (360° berücksichtigt)
+def calc_diff(series):
+    diffs = []
+    prev = None
+    for val in series:
+        if prev is None:
+            diffs.append(None)
+        else:
+            d = abs(val - prev)
+            diffs.append(min(d, 360 - d))
+        prev = val
+    return diffs
 
 def load_data():
     rows = []
@@ -40,7 +51,6 @@ def load_data():
 
         for entry in data.get("data", []):
             try:
-                # ✅ "01n" sauber behandeln
                 zeit_raw = entry.get("zeit", "0")
                 zeit_clean = str(zeit_raw).replace("n", "")
 
@@ -51,8 +61,6 @@ def load_data():
                     "wd_deg": entry.get("wd", 0),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
                     "wskn": entry.get("wskn")
-                    
-                    
                 })
             except:
                 continue
@@ -61,28 +69,29 @@ def load_data():
 
     if len(df) > 0:
 
-        # ✅ Zeitraum: Freitag 16 → Samstag 16
+        # ✅ Zeitraum
         df = df[
             ((df["day"] == "Fri") & (df["Zeit"] >= 16)) |
             ((df["day"] == "Sat") & (df["Zeit"] <= 16))
         ]
-    
-        # ✅ Reihenfolge sauber nach Tag + Zeit
+
+        # ✅ Sortierung
         day_order = {"Fri": 0, "Sat": 1}
         df["day_num"] = df["day"].map(day_order)
-    
-        df = df.sort_values(["day_num", "Zeit"])
-    
-        # ✅ Zeit sauber darstellen
-        df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
-    
+        df = df.sort_values(["Waypoint", "day_num", "Zeit"])
+
+        # ✅ Differenz berechnen
+        df["wd_diff"] = df.groupby("Waypoint")["wd_deg"].transform(calc_diff)
+
         # ✅ Anzeige
+        df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
+
         df["Anzeige"] = (
             df["wd"].astype(str) +
             " (" + df["wd_deg"].astype(str) + "°)" +
             " | " + df["wskn"].astype(str)
         )
-    
+
     return df
 
 # ---------------- UI ----------------
@@ -101,18 +110,39 @@ else:
         values="Anzeige",
         aggfunc="first"
     )
-    
-    pivot = pivot.sort_index()
-    
-   # pivot.index = pivot.index.strftime("%H:%M")
+
+    pivot_diff = df.pivot_table(
+        index="Zeit_real",
+        columns="Waypoint",
+        values="wd_diff",
+        aggfunc="first"
+    )
+
+    # ✅ Sortierung der Spalten nach P-Nummer
     def sort_key(col):
         return int(col.split()[0].replace("P", ""))
 
     pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
-    #order = ["P2","P3","P4","P5","P6","P7","P14","P15"]
-    #pivot = pivot.reindex(columns=order)
-    
-    st.dataframe(pivot, use_container_width=True)
+    pivot_diff = pivot_diff.reindex(pivot.columns, axis=1)
+
+    # ✅ Highlight Funktion
+    def highlight(row):
+        styles = []
+        for col in pivot.columns:
+            diff = pivot_diff.loc[row.name, col]
+            if pd.isna(diff):
+                styles.append("")
+            elif diff > 40:
+                styles.append("background-color: #ff0000")
+            elif diff > 20:
+                styles.append("background-color: #ff9999")
+            else:
+                styles.append("")
+        return styles
+
+    styled = pivot.style.apply(highlight, axis=1)
+
+    st.dataframe(styled, use_container_width=True)
 
 # Refresh Button
 if st.button("🔄 Aktualisieren"):
