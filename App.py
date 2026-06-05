@@ -140,8 +140,8 @@ else:
 
     pivot_dir = pivot_dir.reindex(columns=sorted_cols)
     pivot_wind = pivot_wind.reindex(columns=sorted_cols)
-    pivot_diff = pivot_diff.reindex(columns=sorted_cols)
-    pivot_diff = pivot_diff.reindex(index=pivot_wind.index, columns=pivot_wind.columns)
+    pivot_diff = pivot_diff.reindex_like(pivot_wind)
+    pivot_wind_diff = pivot_wind_diff.reindex_like(pivot_wind)
     pivot_wind_diff = pivot_wind_diff.reindex(index=pivot_wind.index, columns=pivot_wind.columns)
 
     # ✅ Highlight Funktion (nur für Wind)
