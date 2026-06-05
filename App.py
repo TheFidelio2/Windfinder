@@ -30,55 +30,47 @@ def load_data():
         try:
             r = requests.get(wp["url"], timeout=10)
             data = r.json()
-            #st.write(data.get("data", [])[:3])
         except:
             continue
 
-        # API liefert Dictionary → values() verwenden
         for entry in data.get("data", []):
             try:
+                # ✅ "01n" sauber behandeln
+                zeit_raw = entry.get("zeit", "0")
+                zeit_clean = str(zeit_raw).replace("n", "")
+
                 rows.append({
                     "Waypoint": wp["name"],
-                    "Zeit": int(entry.get("zeit", 0)),
-                    "TMP": entry.get("TMP"),
+                    "Zeit": int(zeit_clean),
                     "wd_deg": entry.get("wd", 0),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
-                    "wskn": entry.get("wskn"),
-                    "Tfeel": entry.get("Tfeel")
+                    "wskn": entry.get("wskn")
                 })
             except:
                 continue
+
     df = pd.DataFrame(rows)
 
     if len(df) > 0:
+        # ✅ aktuelle Stunde
         now = datetime.now().replace(minute=0, second=0, microsecond=0)
         now_hour = now.hour
 
+        # ✅ richtige Reihenfolge (auch über Mitternacht)
         df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
-    
         df = df.sort_values("Zeit_diff")
-        df = df.groupby("Waypoint").head(6)
-    
-        # ✅ HIER NEU
-        df["Zeit_real"] = df["Zeit_diff"].apply(lambda x: now + timedelta(hours=x))
-    
-        # Anzeige
-        df["Anzeige"] = (
-            df["wd"].astype(str) +
-            " (" + df["wd_deg"].astype(str) + "°)" +
-            " | v:" + df["wskn"].astype(str)
-        )
 
-        
-        # ✅ Zeitfilter
-        now_hour = datetime.now().hour
-        df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
-        df = df[df["Zeit_diff"] <= 6]
-        # ✅ Anzeige kombinieren
+        # ✅ nur nächste 6 Werte pro Wegpunkt
+        df = df.groupby("Waypoint").head(6)
+
+        # ✅ echte Zeit berechnen
+        df["Zeit_real"] = df["Zeit_diff"].apply(lambda x: now + timedelta(hours=x))
+
+        # ✅ Anzeige
         df["Anzeige"] = (
             df["wd"].astype(str) +
             " (" + df["wd_deg"].astype(str) + "°)" +
-            " | v:" + df["wskn"].astype(str)
+            " | " + df["wskn"].astype(str)
         )
 
     return df
