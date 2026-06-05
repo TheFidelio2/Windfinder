@@ -36,7 +36,7 @@ def load_data():
         for key,entry in data.items():
             rows.append({
                 "Waypoint": wp["name"],
-                "Zeit": int(entry.get("zeit", 0)),
+                "Zeit": int(entry["zeit"]) if "zeit" in entry else 0,
                 "TMP": entry.get("TMP"),
                 "wd": deg_to_compass8(entry.get("wd", 0)),
                 "wskn": entry.get("wskn"),
