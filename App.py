@@ -29,6 +29,7 @@ def load_data():
         try:
             r = requests.get(wp["url"], timeout=10)
             data = r.json()
+            st.write(data)
         except:
             continue
 
