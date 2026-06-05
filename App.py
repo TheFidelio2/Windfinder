@@ -40,10 +40,10 @@ def load_data():
                 rows.append({
                     "Waypoint": wp["name"],
                     "Zeit": int(entry.get("zeit", 0)),
-                    #"TMP": entry.get("TMP"),
+                    "TMP": entry.get("TMP"),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
                     "wskn": entry.get("wskn"),
-                    #"Tfeel": entry.get("Tfeel")
+                    "Tfeel": entry.get("Tfeel")
                 })
             except:
                 continue
@@ -59,10 +59,9 @@ def load_data():
         df = df[df["Zeit_diff"] <= 6]
         # ✅ Anzeige kombinieren
         df["Anzeige"] = (
-            "T:" + df["TMP"].astype(str) +
             " | W:" + df["wd"].astype(str) +
             " | v:" + df["wskn"].astype(str) +
-            " | F:" + df["Tfeel"].astype(str)
+            
         )
 
     return df
