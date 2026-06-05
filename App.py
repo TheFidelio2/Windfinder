@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd 
 import requests
 API_URL = "https://api-main02.meteo-services.com/rundum/"
-def deg_to_compass8(deg): directions = ["N", "NO", "O", "SO", "S", "SW", "W", "NW"] idx = int((deg + 22.5) / 45) % 8 return directions[idx]
+def deg_to_compass8(deg): directions = ["N", "NO", "O", "SO", "S", "SW", "W", "NW"] 
+    idx = int((deg + 22.5) / 45) % 8 
+return directions[idx]
 @st.cache_data(ttl=300) def load_data(): try: r = requests.get(API_URL, timeout=10) r.raise_for_status() data = r.json() except Exception as e: st.error(f"Fehler beim Laden der API: {e}") return pd.DataFrame()
 records = []
 
