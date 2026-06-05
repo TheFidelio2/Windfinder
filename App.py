@@ -64,7 +64,7 @@ def load_data():
         df = df.groupby("Waypoint").head(6)
 
         # ✅ echte Zeit berechnen
-        df["Zeit_real"] = df["Zeit_diff"].apply(lambda x: now + timedelta(hours=x))
+        df["Zeit_real"] = df["Zeit"].astype(str).str.zfill(2) + ":00"
 
         # ✅ Anzeige
         df["Anzeige"] = (
