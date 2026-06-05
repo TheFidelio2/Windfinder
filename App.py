@@ -86,10 +86,8 @@ def load_data():
         # ✅ Anzeige
         df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
 
-        df["Anzeige"] = (
-            df["wd"].astype(str) +
-            " (" + df["wd_deg"].astype(str) + "°)" +
-            " | " + df["wskn"].astype(str)
+        df["Richtung"] = df["wd"].astype(str) + " (" + df["wd_deg"].astype(str) + "°)"
+        df["Wind"] = df["wskn"]
         )
 
     return df
@@ -110,19 +108,29 @@ else:
         values="Anzeige",
         aggfunc="first"
     )
-
-    pivot_diff = df.pivot_table(
+    pivot_wind = df.pivot_table(
         index="Zeit_real",
         columns="Waypoint",
-        values="wd_diff",
+        values="Wind",
         aggfunc="first"
     )
 
+    pivot_wind = df.pivot_table(
+        index="Zeit_real",
+        columns="Waypoint",
+        values="Wind",
+        aggfunc="first"
+    )
+    
     # ✅ Sortierung der Spalten nach P-Nummer
     def sort_key(col):
         return int(col.split()[0].replace("P", ""))
 
-    pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
+    sorted_cols = sorted(pivot.columns.levels[1], key=sort_key)
+
+    pivot = pivot.reindex(columns=sorted_cols, level=1)
+
+    #pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
     pivot_diff = pivot_diff.reindex(pivot.columns, axis=1)
     pivot_diff = pivot_diff.reindex(index=pivot.index, columns=pivot.columns)
 
