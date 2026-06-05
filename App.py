@@ -72,6 +72,7 @@ def load_data():
         # ✅ richtige Reihenfolge (auch über Mitternacht)
         df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
         df = df.sort_values("Zeit_diff")
+        df = df.groupby("Waypoint").head(6)
 
         # ✅ nur nächste 6 Werte pro Wegpunkt
         df = df.groupby("Waypoint").apply(lambda x: x.head(24)).reset_index(drop=True)
