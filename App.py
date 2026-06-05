@@ -56,27 +56,27 @@ def load_data():
 
     if len(df) > 0:
 
-    # ✅ Zeitraum: Freitag 16 → Samstag 16
-    df = df[
-        ((df["day"] == "Fri") & (df["Zeit"] >= 16)) |
-        ((df["day"] == "Sat") & (df["Zeit"] <= 16))
-    ]
-
-    # ✅ Reihenfolge sauber nach Tag + Zeit
-    day_order = {"Fri": 0, "Sat": 1}
-    df["day_num"] = df["day"].map(day_order)
-
-    df = df.sort_values(["day_num", "Zeit"])
-
-    # ✅ Zeit sauber darstellen
-    df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
-
-    # ✅ Anzeige
-    df["Anzeige"] = (
-        df["wd"].astype(str) +
-        " (" + df["wd_deg"].astype(str) + "°)" +
-        " | " + df["wskn"].astype(str)
-    )
+        # ✅ Zeitraum: Freitag 16 → Samstag 16
+        df = df[
+            ((df["day"] == "Fri") & (df["Zeit"] >= 16)) |
+            ((df["day"] == "Sat") & (df["Zeit"] <= 16))
+        ]
+    
+        # ✅ Reihenfolge sauber nach Tag + Zeit
+        day_order = {"Fri": 0, "Sat": 1}
+        df["day_num"] = df["day"].map(day_order)
+    
+        df = df.sort_values(["day_num", "Zeit"])
+    
+        # ✅ Zeit sauber darstellen
+        df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
+    
+        # ✅ Anzeige
+        df["Anzeige"] = (
+            df["wd"].astype(str) +
+            " (" + df["wd_deg"].astype(str) + "°)" +
+            " | " + df["wskn"].astype(str)
+        )
     
     return df
 
