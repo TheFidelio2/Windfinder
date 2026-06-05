@@ -145,9 +145,9 @@ else:
         for col in row.index:
             diff_dir = pivot_diff.loc[row.name, col] if row.name in pivot_diff.index and col in pivot_diff.columns else None
     
-            if pd.notna(diff_dir) and diff_dir >= 20:
+            if pd.notna(diff_dir) and diff_dir >= 40:
                 styles.append("background-color: #ff0000")  # rot
-            elif pd.notna(diff_dir) and diff_dir >= 10:
+            elif pd.notna(diff_dir) and diff_dir >= 20:
                 styles.append("background-color: #ff9999")  # hellrot
             else:
                 styles.append("")
