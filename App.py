@@ -9,16 +9,11 @@ def deg_to_compass8(deg):
     return dirs[int((deg + 22.5) / 45) % 8]
 
 def load_data():
-    waypoints = [
-        {"name": "P2", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.537213&lon=9.617470&elev=396"},
-        {"name": "P3", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.553687&lon=9.529387&elev=396"},
-        {"name": "P4", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.568882&lon=9.398480&elev=396"},
-        {"name": "P5", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.601061&lon=9.355469&elev=396"},
-        {"name": "P6", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.630091&lon=9.292966&elev=396"},
-        {"name": "P7", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.664314&lon=9.225897&elev=396"},
-        {"name": "P14", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.686153&lon=9.257889&elev=396"},
-        {"name": "P15", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.662275&lon=9.303939&elev=396"}
-    ]
+    try:
+        r = requests.get(API_URL, timeout=10)
+        data = r.json()
+    except:
+        return pd.DataFrame()
 
     rows = []
 
@@ -29,7 +24,6 @@ def load_data():
         except:
             continue
 
-        # 🔍 ggf. "data" durch "hourly" ersetzen falls nötig
         for entry in data.get("data", []):
             rows.append({
                 "Waypoint": wp["name"],
@@ -42,11 +36,6 @@ def load_data():
 
     if len(df) > 0:
         df["Zeit"] = pd.to_datetime(df["Zeit"])
-        from datetime import datetime, timedelta
-        now = datetime.now()
-        limit = now + timedelta(hours=6)
-
-df = df[(df["Zeit"] >= now) & (df["Zeit"] <= limit)]
 
     return df
 
