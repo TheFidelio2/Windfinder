@@ -78,17 +78,19 @@ if len(df) == 0:
     st.write("Keine Daten")
 else:
     pivot = df.pivot_table(
-        index="Zeit",
+        index="Zeit_real",
         columns="Waypoint",
         values="Anzeige",
         aggfunc="first"
     )
-
+    
     pivot = pivot.sort_index()
+    
+    pivot.index = pivot.index.strftime("%H:%M")
+    
     order = ["P2","P3","P4","P5","P6","P7","P14","P15"]
     pivot = pivot.reindex(columns=order)
     
-
     st.dataframe(pivot, use_container_width=True)
 
 # Refresh Button
