@@ -177,13 +177,7 @@ else:
             elif pd.notna(diff_wind) and diff_wind <= -2:
                 styles.append("background-color: #cce5ff")  # hellblau
     
-            # 🟠 absolute Geschwindigkeit
-            elif pd.notna(speed) and speed >= 4:
-                styles.append("background-color: orange")
             
-            elif pd.notna(speed) and speed >= 2:
-                styles.append("background-color: yellow")
-    
             else:
                 styles.append("")
     
