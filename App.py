@@ -33,7 +33,7 @@ def load_data():
             continue
 
         # ggf. "data" durch "hourly" ersetzen
-        for entry in data.get("data", []):
+        for entry in data.get("hourly", []):
             rows.append({
                 "Waypoint": wp["name"],
                 "Zeit": entry.get("time"),
