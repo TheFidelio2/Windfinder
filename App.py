@@ -88,7 +88,7 @@ def load_data():
 
         df["Richtung"] = df["wd"].astype(str) + " (" + df["wd_deg"].astype(str) + "°)"
         df["Wind"] = df["wskn"]
-        )
+        
 
     return df
 
