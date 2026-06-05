@@ -51,9 +51,25 @@ def load_data():
     df = pd.DataFrame(rows)
 
     if len(df) > 0:
-        now_hour = datetime.now().hour
-        limit = now_hour + 6
+        now = datetime.now().replace(minute=0, second=0, microsecond=0)
+        now_hour = now.hour
 
+        df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
+    
+        df = df.sort_values("Zeit_diff")
+        df = df.groupby("Waypoint").head(6)
+    
+        # ✅ HIER NEU
+        df["Zeit_real"] = df["Zeit_diff"].apply(lambda x: now + timedelta(hours=x))
+    
+        # Anzeige
+        df["Anzeige"] = (
+            df["wd"].astype(str) +
+            " (" + df["wd_deg"].astype(str) + "°)" +
+            " | v:" + df["wskn"].astype(str)
+        )
+
+        
         # ✅ Zeitfilter
         now_hour = datetime.now().hour
         df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
