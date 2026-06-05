@@ -140,49 +140,38 @@ else:
     pivot_wind_diff = pivot_wind_diff.reindex(pivot_wind.index)
     
     # ✅ Highlight Funktion (nur für Wind)
-    def highlight(row):
+    def highlight_dir(row):
         styles = []
         for col in row.index:
-            
             diff_dir = pivot_diff.loc[row.name, col] if row.name in pivot_diff.index and col in pivot_diff.columns else None
+    
+            if pd.notna(diff_dir) and diff_dir >= 20:
+                styles.append("background-color: #ff0000")  # rot
+            elif pd.notna(diff_dir) and diff_dir >= 10:
+                styles.append("background-color: #ff9999")  # hellrot
+            else:
+                styles.append("")
+        return styles
+    
+    def highlight_wind(row):
+        styles = []
+        for col in row.index:
             diff_wind = pivot_wind_diff.loc[row.name, col] if row.name in pivot_wind_diff.index and col in pivot_wind_diff.columns else None
     
-            # ✅ UNTERSCHEID: welche Tabelle wird gerade gestylt?
-            if row.name in pivot_dir.index:
-                # ----------------
-                # 🧭 RICHTUNG
-                # ----------------
-                if pd.notna(diff_dir) and diff_dir >= 20:
-                    styles.append("background-color: #ff0000")  # rot
-                
-                elif pd.notna(diff_dir) and diff_dir >= 10:
-                    styles.append("background-color: #ff9999")  # hellrot
-                
-                else:
-                    styles.append("")
-            
+            if pd.notna(diff_wind) and diff_wind >= 4:
+                styles.append("background-color: #3399ff")  # blau
+            elif pd.notna(diff_wind) and diff_wind >= 2:
+                styles.append("background-color: #00cc44")  # grün
+            elif pd.notna(diff_wind) and diff_wind <= -4:
+                styles.append("background-color: orange")  # orange
+            elif pd.notna(diff_wind) and diff_wind <= -2:
+                styles.append("background-color: yellow")  # gelb
             else:
-                # ----------------
-                # 🌬️ WIND
-                # ----------------
-                if pd.notna(diff_wind) and diff_wind >= 4:
-                    styles.append("background-color: #3399ff")  # blau
-                
-                elif pd.notna(diff_wind) and diff_wind >= 2:
-                    styles.append("background-color: #00cc44")  # grün
-                
-                elif pd.notna(diff_wind) and diff_wind <= -4:
-                    styles.append("background-color: orange")  # orange
-                
-                elif pd.notna(diff_wind) and diff_wind <= -2:
-                    styles.append("background-color: yellow")  # gelb
-                
-                else:
-                    styles.append("")
-        
+                styles.append("")
         return styles
-    styled_dir = pivot_dir.style.apply(highlight, axis=1)
-    styled_wind = pivot_wind.style.apply(highlight, axis=1)
+    
+    styled_dir = pivot_dir.style.apply(highlight_dir, axis=1)
+    styled_wind = pivot_wind.style.apply(highlight_wind, axis=1)
     
     st.subheader("🧭 Richtung")
     st.dataframe(styled_dir, use_container_width=True)
