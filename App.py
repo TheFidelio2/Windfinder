@@ -62,7 +62,9 @@ def load_data():
         day_order = {"Fri": 0, "Sat": 1}
         df["day_num"] = df["day"].map(day_order)
         
-        df = df.sort_values(["day_num", "Zeit"])
+        #df = df.sort_values(["day_num", "Zeit"])
+        df["idx"] = df.groupby("Waypoint").cumcount()
+        df = df.sort_values(["Waypoint", "idx"])
         # ✅ aktuelle Stunde
         now = datetime.now().replace(minute=0, second=0, microsecond=0)
         now_hour = now.hour
@@ -72,7 +74,7 @@ def load_data():
         df = df.sort_values("Zeit_diff")
 
         # ✅ nur nächste 6 Werte pro Wegpunkt
-        df = df.groupby("Waypoint").head(6)
+        df = df.groupby("Waypoint").apply(lambda x: x.head(24)).reset_index(drop=True)
 
         # ✅ echte Zeit berechnen
         df["Zeit_real"] = df["day"] + " " + df["Zeit"].astype(str).str.zfill(2) + ":00"
