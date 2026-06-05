@@ -119,19 +119,8 @@ else:
         aggfunc="first"
     )
 
-    pivot_diff = df.pivot_table(
-        index="Zeit_real",
-        columns="Waypoint",
-        values="wd_diff",
-        aggfunc="first"
-    )
-
-    pivot_wind_diff = df.pivot_table(
-        index="Zeit_real",
-        columns="Waypoint",
-        values="wskn_diff",
-        aggfunc="first"
-    )
+    pivot_diff = df.set_index(["Zeit_real", "Waypoint"])["wd_diff"].unstack()
+    pivot_wind_diff = df.set_index(["Zeit_real", "Waypoint"])["wskn_diff"].unstack()
 
     # ✅ Sortierung nach P-Nummer
     def sort_key(col):
