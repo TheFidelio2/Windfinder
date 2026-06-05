@@ -157,10 +157,10 @@ else:
             # PRIORITÄT: Richtung > Windänderung > absolute Geschwindigkeit
     
             # 🔴 Richtungsänderung
-            if pd.notna(diff_dir) and diff_dir > 40:
+            if pd.notna(diff_dir) and diff_dir > 20:
                 styles.append("background-color: #ff0000")
             
-            elif pd.notna(diff_dir) and diff_dir > 20:
+            elif pd.notna(diff_dir) and diff_dir > 10:
                 styles.append("background-color: #ff9999")
     
             # 🟢 Zunahme Wind
