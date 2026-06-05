@@ -180,10 +180,12 @@ else:
     
     styled_wind = pivot_wind.style.apply(highlight, axis=1)
 
-    st.subheader("🧭 Richtung")
-    st.dataframe(pivot_dir, use_container_width=True)
+    styled_dir = pivot_dir.style.apply(highlight, axis=1)
 
-    st.subheader("🌬️ Wind")
+    st.subheader("🧭 Richtung")
+    st.dataframe(styled_dir, use_container_width=True)
+
+    st.subheader("🌬️ Windgeschwindigkeit")
     st.dataframe(styled_wind, use_container_width=True)
     
 # Refresh Button
