@@ -29,31 +29,36 @@ def load_data():
         try:
             r = requests.get(wp["url"], timeout=10)
             data = r.json()
-            st.write(data)
         except:
             continue
 
-        # ggf. "data" durch "hourly" ersetzen
-        for entry in data.get("hourly", []):
+        for entry in data.values():
             rows.append({
                 "Waypoint": wp["name"],
-                "Zeit": entry.get("time"),
-                "Richtung": deg_to_compass8(entry.get("wind_direction", 0)),
-                "Wind": entry.get("wind_speed")
+                "Zeit": int(entry.get("zeit", 0)),
+                "TMP": entry.get("TMP"),
+                "wd": deg_to_compass8(entry.get("wd", 0)),
+                "wskn": entry.get("wskn"),
+                "Tfeel": entry.get("Tfeel")
             })
 
     df = pd.DataFrame(rows)
 
     if len(df) > 0:
-        df["Zeit"] = pd.to_datetime(df["Zeit"])
+        now_hour = datetime.now().hour
+        limit = now_hour + 6
 
-        # ✅ Filter: jetzt + 6 Stunden
-        now = datetime.now()
-        limit = now + timedelta(hours=6)
-        df = df[(df["Zeit"] >= now) & (df["Zeit"] <= limit)]
+        df = df[(df["Zeit"] >= now_hour) & (df["Zeit"] <= limit)]
+
+        # 🔥 Kombinierte Anzeige
+        df["Anzeige"] = (
+            "T:" + df["TMP"].astype(str) +
+            " | W:" + df["wd"].astype(str) +
+            " | v:" + df["wskn"].astype(str) +
+            " | F:" + df["Tfeel"].astype(str)
+        )
 
     return df
-
 def color_wind(val):
     colors = {
         "N": "#4A90E2",
