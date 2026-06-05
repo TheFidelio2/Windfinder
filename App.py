@@ -124,12 +124,17 @@ else:
 
     pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
     pivot_diff = pivot_diff.reindex(pivot.columns, axis=1)
+    pivot_diff = pivot_diff.reindex(index=pivot.index, columns=pivot.columns)
 
     # ✅ Highlight Funktion
     def highlight(row):
         styles = []
         for col in pivot.columns:
-            diff = pivot_diff.loc[row.name, col]
+            try:
+                diff = pivot_diff.loc[row.name, col]
+            except KeyError:
+                diff = None
+    
             if pd.isna(diff):
                 styles.append("")
             elif diff > 40:
@@ -139,7 +144,7 @@ else:
             else:
                 styles.append("")
         return styles
-
+    
     styled = pivot.style.apply(highlight, axis=1)
 
     st.dataframe(styled, use_container_width=True)
