@@ -9,21 +9,33 @@ def deg_to_compass8(deg):
     return dirs[int((deg + 22.5) / 45) % 8]
 
 def load_data():
-    try:
-        r = requests.get(API_URL, timeout=10)
-        data = r.json()
-    except:
-        return pd.DataFrame()
+    waypoints = [
+        {"name": "P2", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.537213&lon=9.617470&elev=396"},
+        {"name": "P3", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.553687&lon=9.529387&elev=396"},
+        {"name": "P4", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.568882&lon=9.398480&elev=396"},
+        {"name": "P5", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.601061&lon=9.355469&elev=396"},
+        {"name": "P6", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.630091&lon=9.292966&elev=396"},
+        {"name": "P7", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.664314&lon=9.225897&elev=396"},
+        {"name": "P14", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.686153&lon=9.257889&elev=396"},
+        {"name": "P15", "url": "https://api-main02.meteo-services.com/rundum/wind-ICOND2-02.php?lat=47.662275&lon=9.303939&elev=396"}
+    ]
 
     rows = []
 
-    for wp in data.get("waypoints", []):
-        for m in wp.get("measurements", []):
+    for wp in waypoints:
+        try:
+            r = requests.get(wp["url"], timeout=10)
+            data = r.json()
+        except:
+            continue
+
+        # 🔍 ggf. "data" durch "hourly" ersetzen falls nötig
+        for entry in data.get("data", []):
             rows.append({
-                "Waypoint": wp.get("name"),
-                "Zeit": m.get("timestamp"),
-                "Richtung": deg_to_compass8(m.get("direction", 0)),
-                "Wind": m.get("speed")
+                "Waypoint": wp["name"],
+                "Zeit": entry.get("time"),
+                "Richtung": deg_to_compass8(entry.get("wind_direction", 0)),
+                "Wind": entry.get("wind_speed")
             })
 
     df = pd.DataFrame(rows)
