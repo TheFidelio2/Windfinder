@@ -83,6 +83,9 @@ else:
     )
 
     pivot = pivot.sort_index()
+    order = ["P2","P3","P4","P5","P6","P7","P14","P15"]
+    pivot = pivot.reindex(columns=order)
+    
 
     st.dataframe(pivot, use_container_width=True)
 
