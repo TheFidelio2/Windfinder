@@ -61,7 +61,6 @@ def load_data():
         df["Anzeige"] = (
             " | W:" + df["wd"].astype(str) +
             " | v:" + df["wskn"].astype(str) +
-            
         )
 
     return df
