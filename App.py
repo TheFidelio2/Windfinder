@@ -117,57 +117,50 @@ else:
         aggfunc="first"
     )
 
-    pivot = pd.concat(
-        [pivot_dir, pivot_wind],
-        axis=1,
-        keys=["Richtung", "Wind"]
+    pivot_diff = df.pivot_table(
+        index="Zeit_real",
+        columns="Waypoint",
+        values="wd_diff",
+        aggfunc="first"
     )
-    # ✅ Sortierung der Spalten nach P-Nummer
+
+    # ✅ Sortierung nach P-Nummer
     def sort_key(col):
         return int(col.split()[0].replace("P", ""))
 
-    sorted_cols = sorted(pivot.columns.levels[1], key=sort_key)
+    sorted_cols = sorted(pivot_dir.columns, key=sort_key)
 
-    pivot = pivot.reindex(columns=sorted_cols, level=1)
+    pivot_dir = pivot_dir.reindex(columns=sorted_cols)
+    pivot_wind = pivot_wind.reindex(columns=sorted_cols)
+    pivot_diff = pivot_diff.reindex(columns=sorted_cols)
 
-    #pivot = pivot.reindex(sorted(pivot.columns, key=sort_key), axis=1)
-    pivot_diff = pivot_diff.reindex(pivot.columns, axis=1)
-    pivot_diff = pivot_diff.reindex(index=pivot.index, columns=pivot.columns)
-
-    # ✅ Highlight Funktion
+    # ✅ Highlight Funktion (nur für Wind)
     def highlight(row):
         styles = []
-        for col in pivot.columns:
-            try:
-                diff = pivot_diff.loc[row.name, col]
-            except:
-                diff = None
-    
-            # Windgeschwindigkeit aus Text extrahieren
-            try:
-                val = row[col]
-                speed = float(val.split("|")[1].strip())
-            except:
-                speed = None
-    
-            # Priorität: Richtungsänderung > Geschwindigkeit
+        for col in pivot_wind.columns:
+            diff = pivot_diff.loc[row.name, col] if col in pivot_diff.columns else None
+            speed = row[col]
+
             if pd.notna(diff) and diff > 40:
-                styles.append("background-color: #ff0000")  # stark rot
+                styles.append("background-color: #ff0000")
             elif pd.notna(diff) and diff > 20:
-                styles.append("background-color: #ff9999")  # hellrot
-            elif speed is not None and speed >= 4:
-                styles.append("background-color: orange")   # stark wind
-            elif speed is not None and speed >= 2:
-                styles.append("background-color: yellow")   # mittel wind
+                styles.append("background-color: #ff9999")
+            elif pd.notna(speed) and speed >= 4:
+                styles.append("background-color: orange")
+            elif pd.notna(speed) and speed >= 2:
+                styles.append("background-color: yellow")
             else:
                 styles.append("")
         return styles
 
+    styled_wind = pivot_wind.style.apply(highlight, axis=1)
+
+    st.subheader("🧭 Richtung")
+    st.dataframe(pivot_dir, use_container_width=True)
+
+    st.subheader("🌬️ Wind")
+    st.dataframe(styled_wind, use_container_width=True)
     
-    styled = pivot.style.apply(highlight, axis=1)
-
-    st.dataframe(styled, use_container_width=True)
-
 # Refresh Button
 if st.button("🔄 Aktualisieren"):
     st.rerun()
