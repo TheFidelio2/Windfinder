@@ -41,6 +41,7 @@ def load_data():
                     "Waypoint": wp["name"],
                     "Zeit": int(entry.get("zeit", 0)),
                     "TMP": entry.get("TMP"),
+                    "wd_deg": entry.get("wd", 0),
                     "wd": deg_to_compass8(entry.get("wd", 0)),
                     "wskn": entry.get("wskn"),
                     "Tfeel": entry.get("Tfeel")
