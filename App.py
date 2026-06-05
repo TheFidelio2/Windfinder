@@ -55,7 +55,7 @@ def load_data():
         # ✅ Zeitfilter
         now_hour = datetime.now().hour
         df["Zeit_diff"] = (df["Zeit"] - now_hour + 24) % 24
-        df = df[df["Zeit_diff"] <= 6]
+        # df = df[df["Zeit_diff"] <= 6]
         # ✅ Anzeige kombinieren
         df["Anzeige"] = (
             "T:" + df["TMP"].astype(str) +
