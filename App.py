@@ -59,7 +59,8 @@ def load_data():
         df = df[df["Zeit_diff"] <= 6]
         # ✅ Anzeige kombinieren
         df["Anzeige"] = (
-            " | W:" + df["wd"].astype(str) +
+            df["wd"].astype(str) +
+            " (" + df["wd_deg"].astype(str) + "°)" +
             " | v:" + df["wskn"].astype(str)
         )
 
