@@ -78,7 +78,8 @@ def load_data():
         # ✅ Sortierung
         day_order = {"Fri": 0, "Sat": 1}
         df["day_num"] = df["day"].map(day_order)
-        df = df.sort_values(["Waypoint", "day_num", "Zeit"])
+        df["Zeit_sort"] = df["day_num"] * 100 + df["Zeit"]
+        df = df.sort_values(["Waypoint", "Zeit_sort"]).reset_index(drop=True)
 
         # ✅ Differenz berechnen
         df["wd_diff"] = df.groupby("Waypoint")["wd_deg"].transform(calc_diff)
