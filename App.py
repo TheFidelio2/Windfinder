@@ -137,30 +137,30 @@ else:
 
     # ✅ Highlight Funktion (nur für Wind)
     def highlight(row):
-    styles = []
-    for col in pivot_wind.columns:
-        
-        # ✅ sichere Differenz holen
-        diff = None
-        if row.name in pivot_diff.index and col in pivot_diff.columns:
-            diff = pivot_diff.loc[row.name, col]
-
-        # ✅ Geschwindigkeit direkt
-        speed = row[col] if col in row else None
-
-        # ✅ Logik
-        if pd.notna(diff) and diff > 40:
-            styles.append("background-color: #ff0000")
-        elif pd.notna(diff) and diff > 20:
-            styles.append("background-color: #ff9999")
-        elif pd.notna(speed) and speed >= 4:
-            styles.append("background-color: orange")
-        elif pd.notna(speed) and speed >= 2:
-            styles.append("background-color: yellow")
-        else:
-            styles.append("")
+        styles = []
+        for col in pivot_wind.columns:
+            
+            # ✅ sichere Differenz holen
+            diff = None
+            if row.name in pivot_diff.index and col in pivot_diff.columns:
+                diff = pivot_diff.loc[row.name, col]
     
-    return styles
+            # ✅ Geschwindigkeit direkt
+            speed = row[col] if col in row else None
+    
+            # ✅ Logik
+            if pd.notna(diff) and diff > 40:
+                styles.append("background-color: #ff0000")
+            elif pd.notna(diff) and diff > 20:
+                styles.append("background-color: #ff9999")
+            elif pd.notna(speed) and speed >= 4:
+                styles.append("background-color: orange")
+            elif pd.notna(speed) and speed >= 2:
+                styles.append("background-color: yellow")
+            else:
+                styles.append("")
+        
+        return styles
     
     styled_wind = pivot_wind.style.apply(highlight, axis=1)
 
