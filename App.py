@@ -132,18 +132,29 @@ else:
         for col in pivot.columns:
             try:
                 diff = pivot_diff.loc[row.name, col]
-            except KeyError:
+            except:
                 diff = None
     
-            if pd.isna(diff):
-                styles.append("")
-            elif diff > 40:
-                styles.append("background-color: #ff0000")
-            elif diff > 20:
-                styles.append("background-color: #ff9999")
+            # Windgeschwindigkeit aus Text extrahieren
+            try:
+                val = row[col]
+                speed = float(val.split("|")[1].strip())
+            except:
+                speed = None
+    
+            # Priorität: Richtungsänderung > Geschwindigkeit
+            if pd.notna(diff) and diff > 40:
+                styles.append("background-color: #ff0000")  # stark rot
+            elif pd.notna(diff) and diff > 20:
+                styles.append("background-color: #ff9999")  # hellrot
+            elif speed is not None and speed >= 4:
+                styles.append("background-color: orange")   # stark wind
+            elif speed is not None and speed >= 2:
+                styles.append("background-color: yellow")   # mittel wind
             else:
                 styles.append("")
         return styles
+
     
     styled = pivot.style.apply(highlight, axis=1)
 
